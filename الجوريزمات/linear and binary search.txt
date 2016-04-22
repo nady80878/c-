@@ -1,0 +1,72 @@
+// Average comparisons for linear and binary search
+#include <iostream>
+
+// Linear search with comparison count
+int LinearSearch(int* ipArray, int iSize, int iTarget, int& irComp)
+{
+    irComp = 0;
+    for (int iIndex = 0; iIndex < iSize; ++iIndex) {
+        ++irComp;
+        if (ipArray[iIndex] == iTarget) {
+            return iIndex;
+        }
+    }
+    return -1;
+}
+
+// Binary search with comparison count
+int BinarySearch(int* ipArray, int iSize, int iTarget, int& irComp)
+{
+    irComp      = 0;
+    int iLow    = 0;
+    int iHigh   = iSize;
+    while (iLow + 1 < iHigh) {
+        // Take the average as the test value
+        int iCheck = ((iLow + iHigh) >> 1);
+        ++irComp;
+        if (ipArray[iCheck] > iTarget) {
+            iHigh   = iCheck;
+        } else {
+            iLow    = iCheck;
+        }
+    }
+    ++irComp;
+    if (ipArray[iLow] == iTarget) {
+        return iLow;
+    } else {
+        return -1;
+    }
+}
+
+#define MArraySize 100
+
+int main() {
+    using namespace std;
+
+    // Create a sorted array
+    int iaArray[MArraySize];
+    iaArray[0] = (rand() % 99);
+    for (int iIndex = 1; iIndex < MArraySize; ++iIndex) {
+        iaArray[iIndex] = iaArray[iIndex - 1] + (rand() % 10) + 1;
+    }
+
+    // Calculate the average number of comparisons for each
+    double dTotalLinear = 0.0;
+    double dTotalBinary = 0.0;
+    for (int iIndex = 0; iIndex < MArraySize; ++iIndex) {
+        int iTarget = iaArray[iIndex];
+        int iCompCount;
+        LinearSearch(iaArray, MArraySize, iTarget, iCompCount);
+        dTotalLinear += iCompCount;
+        BinarySearch(iaArray, MArraySize, iTarget, iCompCount);
+        dTotalBinary += iCompCount;
+    }
+    double dAveLinear = (dTotalLinear/MArraySize);
+    double dAveBinary = (dTotalBinary/MArraySize);
+
+    cout << "Array Size = " << MArraySize << endl;
+    cout << "Average Linear Comparisons = " << dAveLinear << endl;
+    cout << "Average Binary Comparisons = " << dAveBinary << endl;
+
+    return 0;
+}
